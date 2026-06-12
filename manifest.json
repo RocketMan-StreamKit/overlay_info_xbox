@@ -1,4 +1,5 @@
 {
+  "id": "overlay_info_xbox",
   "name": {
     "en": "Xbox Notification",
     "ru": "Уведомление Xbox",
@@ -15,6 +16,13 @@
   "icon": "logo.png",
   "web": "index.html",
   "web_type": "overlay",
-  "web_contents": ["style.css", "xbox.mp3", "logo.png"],
-  "permissions": ["WEB_CONTENT", "WEB_END_POINTS"]
+  "web_contents": [
+    "style.css",
+    "xbox.mp3",
+    "logo.png"
+  ],
+  "permissions": [
+    "WEB_CONTENT",
+    "WEB_END_POINTS"
+  ]
 }
