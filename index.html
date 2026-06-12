@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xbox Notification</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="notification" class="xbox-notification" aria-live="polite">
+      <div class="xbox-notification-accent" aria-hidden="true"></div>
+      <div class="xbox-notification-body">
+        <img
+          id="icon"
+          class="xbox-notification-icon"
+          src="logo.png"
+          alt=""
+        />
+        <div class="xbox-notification-content">
+          <div class="xbox-notification-head">
+            <span id="app-name" class="xbox-notification-app">Xbox</span>
+          </div>
+          <div id="title" class="xbox-notification-title"></div>
+          <div id="message" class="xbox-notification-message"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const settingsCode = params.get('settings') || '';
+      const token = params.get('token') || '';
+      const who = params.get('who') || '';
+      const message = params.get('message') || '';
+
+      const notificationEl = document.getElementById('notification');
+      const titleEl = document.getElementById('title');
+      const messageEl = document.getElementById('message');
+      const appNameEl = document.getElementById('app-name');
+
+      const applyTemplate = (template, values) => {
+        return String(template || '')
+          .replace(/\{who\}/g, values.who || '')
+          .replace(/\{message\}/g, values.message || '')
+          .trim();
+      };
+
+      const playSound = (volume, enabled) => {
+        if (!enabled) return;
+        try {
+          const audio = new Audio('xbox.mp3');
+          audio.volume = Math.max(0, Math.min(1, Number(volume) / 100));
+          void audio.play();
+        } catch (_err) {
+          // Audio may be blocked in some browser sources.
+        }
+      };
+
+      const runEffect = async () => {
+        let titleTemplate = '{who}';
+        let messageTemplate = '{message}';
+        let playSoundEnabled = true;
+        let soundVolume = 80;
+        let secondsToShow = 5;
+        let appName = 'Xbox';
+
+        const requests = [];
+
+        if (settingsCode && token) {
+          requests.push(
+            fetch(
+              `/overlay/settings/${encodeURIComponent(settingsCode)}?token=${encodeURIComponent(token)}`
+            ).then(response => response.json())
+          );
+        }
+
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        const addonId = pathParts[1] || 'overlay_info_xbox';
+        requests.push(
+          fetch(`/addon/${encodeURIComponent(addonId)}/params`).then(response =>
+            response.json()
+          )
+        );
+
+        try {
+          const results = await Promise.all(requests);
+          for (const data of results) {
+            if (!data) continue;
+            if (data.success && data.showInfo) {
+              secondsToShow = Number(data.showInfo.secondsToShow) || 5;
+            }
+            if (typeof data.titleTemplate === 'string') {
+              titleTemplate = data.titleTemplate;
+            }
+            if (typeof data.messageTemplate === 'string') {
+              messageTemplate = data.messageTemplate;
+            }
+            if (typeof data.playSound === 'boolean') {
+              playSoundEnabled = data.playSound;
+            }
+            if (data.soundVolume !== undefined) {
+              soundVolume = Number(data.soundVolume) || 80;
+            }
+            if (typeof data.appName === 'string' && data.appName.trim()) {
+              appName = data.appName.trim();
+            }
+          }
+        } catch (_err) {
+          // Fallback to defaults when settings are unavailable.
+        }
+
+        const title = applyTemplate(titleTemplate, { who, message });
+        const body = applyTemplate(messageTemplate, { who, message });
+
+        titleEl.textContent = title || who || 'Xbox';
+        messageEl.textContent = body;
+        messageEl.style.display = body ? 'block' : 'none';
+        appNameEl.textContent = appName;
+
+        requestAnimationFrame(() => {
+          notificationEl.classList.add('visible');
+        });
+
+        playSound(soundVolume, playSoundEnabled);
+
+        window.setTimeout(() => {
+          notificationEl.classList.add('leaving');
+        }, Math.max(500, secondsToShow * 1000 - 350));
+      };
+
+      runEffect();
+    </script>
+  </body>
+</html>

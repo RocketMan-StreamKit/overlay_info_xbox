@@ -1,0 +1,20 @@
+{
+  "name": {
+    "en": "Xbox Notification",
+    "ru": "Уведомление Xbox",
+    "uk": "Сповіщення Xbox"
+  },
+  "description": {
+    "en": "Shows trigger info as an Xbox-style notification with optional sound.",
+    "ru": "Показывает информацию о триггере в виде уведомления в стиле Xbox со звуком.",
+    "uk": "Показує інформацію про тригер у вигляді сповіщення в стилі Xbox зі звуком."
+  },
+  "type": "overlay.info",
+  "version": "1.0.0",
+  "author": "StreamKit+",
+  "icon": "logo.png",
+  "web": "index.html",
+  "web_type": "overlay",
+  "web_contents": ["style.css", "xbox.mp3", "logo.png"],
+  "permissions": ["WEB_CONTENT", "WEB_END_POINTS"]
+}

@@ -1,0 +1,123 @@
+:root {
+  --xbox-bg: rgba(22, 22, 22, 0.94);
+  --xbox-border: rgba(255, 255, 255, 0.08);
+  --xbox-accent: #107c10;
+  --xbox-accent-glow: rgba(16, 124, 16, 0.45);
+  --xbox-title: #ffffff;
+  --xbox-message: rgba(255, 255, 255, 0.72);
+  --xbox-app: #9bf00b;
+}
+
+html,
+body {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  font-family: 'Segoe UI', 'Segoe UI Variable', system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+.xbox-notification {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  align-items: stretch;
+  width: min(420px, calc(100vw - 48px));
+  min-height: 72px;
+  border-radius: 4px;
+  border: 1px solid var(--xbox-border);
+  background: var(--xbox-bg);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  opacity: 0;
+  transform: translateX(calc(100% + 32px));
+  transition:
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.32s ease;
+}
+
+.xbox-notification.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.xbox-notification.leaving {
+  transform: translateX(calc(100% + 32px));
+  opacity: 0;
+}
+
+.xbox-notification-accent {
+  flex: 0 0 4px;
+  border-radius: 4px 0 0 4px;
+  background: linear-gradient(
+    180deg,
+    var(--xbox-accent) 0%,
+    #0b5a0b 100%
+  );
+  box-shadow: 0 0 12px var(--xbox-accent-glow);
+}
+
+.xbox-notification-body {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px 12px 12px;
+  min-width: 0;
+}
+
+.xbox-notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.xbox-notification-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.xbox-notification-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.xbox-notification-app {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--xbox-app);
+  text-transform: uppercase;
+}
+
+.xbox-notification-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--xbox-title);
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.xbox-notification-message {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--xbox-message);
+  word-break: break-word;
+}
